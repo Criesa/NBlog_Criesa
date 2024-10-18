@@ -112,6 +112,12 @@ public class SiteSettingServiceImpl implements SiteSettingService {
 						case SiteSettingConstants.NETEASE:
 							introduction.setNetease(s.getValue());
 							break;
+						case SiteSettingConstants.STEAM:
+							introduction.setSteam(s.getValue());
+							break;
+						case SiteSettingConstants.DOUYIN:
+							introduction.setDouyin(s.getValue());
+							break;
 						case SiteSettingConstants.EMAIL:
 							introduction.setEmail(s.getValue());
 							break;

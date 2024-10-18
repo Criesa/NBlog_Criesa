@@ -24,6 +24,8 @@ public class Introduction {
 	private String telegram;
 	private String qq;
 	private String bilibili;
+	private String steam;
+	private String douyin;
 	private String netease;
 	private String email;
 

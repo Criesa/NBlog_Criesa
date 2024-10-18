@@ -32,6 +32,12 @@
 				<router-link to="/" style="color:#ffe500" v-if="siteInfo.copyright">{{ siteInfo.copyright.siteName }}</router-link>
 				<span style="margin: 0 15px" v-if="siteInfo.copyright && siteInfo.beian">|</span>
 				<a rel="external nofollow noopener" href="https://beian.miit.gov.cn/" target="_blank" style="color:#ffe500">{{ siteInfo.beian }}</a>
+				<span style="margin: 0 15px" v-if="siteInfo.copyright && siteInfo.beian">|</span>
+				<span>本网站由
+					<a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral" target="_blank">
+						<img src="../../assets/img/又拍云_logo5.png" alt="又拍云" class="upyun">
+					</a>提供CDN加速/云存储服务
+				</span>
 			</p>
 
 			<div class="github-badge" v-for="(item,index) in badges" :key="index">
@@ -40,6 +46,12 @@
 					<span class="badge-value" :class="`bg-${item.color}`">{{ item.value }}</span>
 				</a>
 			</div>
+
+			<div style="margin-top: 10px;" v-if="siteInfo.siteLaunchDate">
+				<p class="m-text-thin m-text-spaced m-opacity-tiny">
+					本站已勉强运行: {{ uptime }}
+				</p>
+  			</div>
 
 		</div>
 	</footer>
@@ -66,12 +78,40 @@
 				required: true
 			}
 		},
+		data() {
+			return {
+				intervalId: null, // 用于存储 setInterval 的 ID
+				uptime: '0天' // 初始化运行时间
+			};
+		},
 		methods: {
 			toBlog(blog) {
 				this.$store.dispatch('goBlogPage', blog)
+			},
+			updateUptime() {
+				const siteLaunchDate = new Date(this.siteInfo.siteLaunchDate);
+				const now = new Date();
+				const diff = now.getTime() - siteLaunchDate.getTime();
+				const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+				const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+				const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+				const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+				this.uptime = `${days}天${hours}小时${minutes}分${seconds}秒`;
+			},
+		},
+		mounted() {
+			// 初始更新一次运行时间
+			this.updateUptime();
+			// 每秒更新一次时间
+			this.intervalId = setInterval(this.updateUptime, 1000);
+		},
+		beforeUnmount() {
+			// 清除定时器
+			if (this.intervalId) {
+				clearInterval(this.intervalId);
 			}
 		}
-	}
+	};
 </script>
 
 <style scoped>
@@ -79,5 +119,11 @@
 
 	.github-badge a {
 		color: #fff;
+	}
+
+	.upyun {
+		height: 30px;
+    	margin-bottom: -10px;
+    	margin-right: 5px;
 	}
 </style>
