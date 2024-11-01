@@ -274,24 +274,27 @@
 			top: 65px
 		}
 	}
-
-	.wave1, .wave2 {
+	.wave1, .wave2{
 		position: absolute;
 		bottom: 0;
-		transition-duration: .4s, .4s;
-		z-index: 80;
+		height: 75px;
+		width: 100%;
+		transform: translateZ(0); /* 启用硬件加速 */
 	}
 
 	.wave1 {
 		background: url('/img/header/wave1.png') repeat-x;
-		height: 75px;
-		width: 100%;
+		animation: waveAnimation 5s linear infinite; /* 增加动画时间 */
 	}
 
 	.wave2 {
-		background: url('/img/header/wave2.png') repeat-x;
-		height: 90px;
-		width: calc(100% + 100px);
-		left: -100px;
+		background: url('/img/header/wave2.png') repeat-x; 
+		animation: waveAnimation 15s linear infinite; /* 增加动画时间 */
+	}
+
+	/* 定义波浪的动画 */
+	@keyframes waveAnimation {
+		0% { background-position: 0 0;}
+		100% { background-position: -1000px 0px;} 
 	}
 </style>
