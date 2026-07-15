@@ -98,6 +98,11 @@
 			next()
 		},
 		beforeRouteUpdate(to, from, next) {
+			// 点击目录只会改变 hash，同一文档内不应重新请求和渲染 Markdown
+			if (to.path === from.path) {
+				next()
+				return
+			}
 			this.destroyTocbot()
 			this.$store.commit(SET_IS_BLOG_RENDER_COMPLETE, false)
 			next()
