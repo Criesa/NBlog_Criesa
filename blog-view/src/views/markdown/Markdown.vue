@@ -33,6 +33,9 @@
 						<div class="markdown-header">
 							<h2 class="ui header">{{ title }}</h2>
 							<div class="markdown-header-actions">
+								<router-link class="markdown-index-link" to="/markdown/">
+									<i class="arrow left icon"></i>返回文档目录
+								</router-link>
 								<el-select v-if="documentVersions.length" v-model="currentVersionPath" size="small" @change="switchVersion">
 									<el-option v-for="version in documentVersions" :key="version.path" :label="`${version.versionLabel} · ${formatModifiedTime(version.mtime)}`" :value="version.path"/>
 								</el-select>
@@ -368,6 +371,10 @@
 
 	.markdown-header-actions .el-select {
 		width: 150px;
+	}
+
+	.markdown-index-link {
+		white-space: nowrap;
 	}
 
 	.markdown-content {
