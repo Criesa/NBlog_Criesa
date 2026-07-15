@@ -25,8 +25,8 @@
 						<div class="three wide column m-mobile-hide">
 							<RandomBlog :randomBlogList="randomBlogList" :class="{'m-display-none':focusMode}"/>
 							<Tags :tagList="tagList" :class="{'m-display-none':focusMode}"/>
-							<!--只在文章页面显示目录-->
-							<Tocbot v-if="$route.name==='blog'"/>
+							<!--只在文章或 Markdown 阅读页面显示目录-->
+							<Tocbot v-if="$route.name==='blog' || $route.name==='markdown'"/>
 						</div>
 					</div>
 				</div>

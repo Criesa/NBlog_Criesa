@@ -34,6 +34,12 @@ const routes = [
 				meta: {title: '博客'}
 			},
 			{
+				path: '/markdown/*',
+				name: 'markdown',
+				component: () => import('@/views/markdown/Markdown'),
+				meta: {title: 'Markdown 阅读'}
+			},
+			{
 				path: '/tag/:name',
 				name: 'tag',
 				component: () => import('@/views/tag/Tag'),
