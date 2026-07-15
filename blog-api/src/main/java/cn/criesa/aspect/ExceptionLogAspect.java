@@ -36,7 +36,7 @@ public class ExceptionLogAspect {
 	/**
 	 * 配置切入点
 	 */
-	@Pointcut("execution(* top.naccl.controller..*.*(..))")
+	@Pointcut("execution(* cn.criesa.controller..*.*(..))")
 	public void logPointcut() {
 	}
 
