@@ -6,6 +6,12 @@ Vue.use(VueRouter)
 
 const routes = [
 	{
+		path: '/markdown/*',
+		name: 'markdown',
+		component: () => import('@/views/markdown/Markdown'),
+		meta: {title: 'Markdown 阅读'}
+	},
+	{
 		path: '/login',
 		component: () => import('@/views/Login'),
 		meta: {title: '登录'}
@@ -32,12 +38,6 @@ const routes = [
 				name: 'blog',
 				component: () => import('@/views/blog/Blog'),
 				meta: {title: '博客'}
-			},
-			{
-				path: '/markdown/*',
-				name: 'markdown',
-				component: () => import('@/views/markdown/Markdown'),
-				meta: {title: 'Markdown 阅读'}
 			},
 			{
 				path: '/tag/:name',

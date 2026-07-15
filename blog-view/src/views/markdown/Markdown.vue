@@ -1,14 +1,24 @@
 <template>
-	<div class="ui padded attached segment m-padded-tb-large markdown-viewer" v-loading="loading" element-loading-text="正在加载 Markdown">
-		<el-alert v-if="error" :title="error" type="error" show-icon :closable="false"/>
-		<template v-else-if="!loading">
-			<div class="markdown-header">
-				<h2 class="ui header">{{ title }}</h2>
-				<a :href="sourceUrl" target="_blank" rel="noopener noreferrer">查看 Markdown 原文件</a>
-			</div>
-			<div class="ui divider"></div>
-			<div class="typo js-toc-content markdown-content match-braces rainbow-braces" v-viewer v-html="html"></div>
-		</template>
+	<div class="markdown-page">
+		<main class="markdown-layout">
+			<section class="ui padded segment markdown-viewer" v-loading="loading" element-loading-text="正在加载 Markdown">
+				<el-alert v-if="error" :title="error" type="error" show-icon :closable="false"/>
+				<template v-else-if="!loading">
+					<div class="markdown-header">
+						<h2 class="ui header">{{ title }}</h2>
+						<a :href="sourceUrl" target="_blank" rel="noopener noreferrer">查看 Markdown 原文件</a>
+					</div>
+					<div class="ui divider"></div>
+					<div class="typo js-toc-content markdown-content match-braces rainbow-braces" v-viewer v-html="html"></div>
+				</template>
+			</section>
+			<aside class="markdown-toc" v-if="!loading && !error">
+				<Tocbot/>
+			</aside>
+		</main>
+		<el-backtop style="box-shadow: none;background: none;z-index: 9999;">
+			<img src="/img/paper-plane.png" alt="回到顶部" class="backtop-image">
+		</el-backtop>
 	</div>
 </template>
 
@@ -16,10 +26,12 @@
 	import axios from 'axios'
 	import {marked} from 'marked'
 	import sanitizeHtml from 'sanitize-html'
+	import Tocbot from '@/components/sidebar/Tocbot'
 	import {SET_IS_BLOG_RENDER_COMPLETE} from '@/store/mutations-types'
 
 	export default {
 		name: 'Markdown',
+		components: {Tocbot},
 		data() {
 			return {
 				error: '',
@@ -27,16 +39,6 @@
 				loading: true,
 				sourceUrl: '',
 				title: 'Markdown 阅读'
-			}
-		},
-		computed: {
-			webTitleSuffix() {
-				return this.$store.state.siteInfo.webTitleSuffix || ''
-			}
-		},
-		watch: {
-			webTitleSuffix() {
-				this.updateDocumentTitle()
 			}
 		},
 		beforeRouteEnter(to, from, next) {
@@ -153,15 +155,35 @@
 				}
 			},
 			updateDocumentTitle() {
-				document.title = this.title + this.webTitleSuffix
+				document.title = this.title
 			}
 		}
 	}
 </script>
 
 <style scoped>
+	.markdown-page {
+		min-height: 100vh;
+		padding: 32px 24px 56px;
+		background: #f5f7fa;
+	}
+
+	.markdown-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 960px) 280px;
+		align-items: start;
+		justify-content: center;
+		gap: 24px;
+		max-width: 1280px;
+		margin: 0 auto;
+	}
+
 	.markdown-viewer {
 		min-height: 320px;
+		margin: 0 !important;
+		border: 0 !important;
+		border-radius: 8px !important;
+		box-shadow: 0 2px 12px rgba(31, 45, 61, 0.08) !important;
 	}
 
 	.markdown-header {
@@ -180,7 +202,41 @@
 		overflow-wrap: anywhere;
 	}
 
+	.markdown-toc {
+		position: sticky;
+		top: 24px;
+		min-width: 0;
+	}
+
+	.backtop-image {
+		width: 40px;
+		height: 40px;
+	}
+
+	@media screen and (max-width: 1024px) {
+		.markdown-layout {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.markdown-toc {
+			position: static;
+			grid-row: 1;
+		}
+	}
+
 	@media screen and (max-width: 767px) {
+		.markdown-page {
+			padding: 12px 0 32px;
+		}
+
+		.markdown-viewer {
+			border-radius: 0 !important;
+		}
+
+		.markdown-toc {
+			padding: 0 12px;
+		}
+
 		.markdown-header {
 			align-items: flex-start;
 			flex-direction: column;
