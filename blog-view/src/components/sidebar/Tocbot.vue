@@ -15,6 +15,12 @@
 
 	export default {
 		name: "Tocbot",
+		data() {
+			return {
+				initialized: false,
+				pendingActiveHref: ''
+			}
+		},
 		computed: {
 			...mapState(['isBlogRenderComplete'])
 		},
@@ -33,9 +39,16 @@
 				}
 			}
 		},
+		beforeDestroy() {
+			this.destroyTocbot()
+		},
 		methods: {
 			initTocbot() {
-				tocbot.init({
+				if (this.initialized || !window.tocbot || !window.document.querySelector('.js-toc') || !window.document.querySelector('.js-toc-content')) {
+					return
+				}
+
+				window.tocbot.init({
 					// Where to render the table of contents.
 					tocSelector: '.js-toc',
 					// Where to grab the headings to build the table of contents.
@@ -52,8 +65,61 @@
 					scrollSmoothOffset: -55,
 					// Headings offset between the headings and the top of the document (this is meant for minor adjustments).
 					// Can also be used to account for scroll height discrepancies from the use of css scroll-padding-top
-					headingsOffset: -18
+					headingsOffset: -18,
+					// 目录靠近页面底部时，Tocbot 会受最大滚动距离影响而选中前面的标题。
+					// 滚动结束后重新确认用户实际点击的目录项。
+					onClick: this.handleTocClick,
+					scrollEndCallback: this.handleTocScrollEnd
 				})
+				this.initialized = true
+			},
+			destroyTocbot() {
+				if (this.initialized && window.tocbot) {
+					window.tocbot.destroy()
+				}
+				this.initialized = false
+				this.pendingActiveHref = ''
+			},
+			handleTocClick(event) {
+				const link = event.target.closest('.toc-link')
+				if (!link) {
+					return
+				}
+				this.pendingActiveHref = link.getAttribute('href') || ''
+				this.applyClickedActive()
+			},
+			handleTocScrollEnd() {
+				this.applyClickedActive()
+				this.pendingActiveHref = ''
+			},
+			applyClickedActive() {
+				if (!this.pendingActiveHref) {
+					return
+				}
+
+				const links = Array.from(window.document.querySelectorAll('.js-toc .toc-link'))
+				const activeLink = links.find(link => link.getAttribute('href') === this.pendingActiveHref)
+				if (!activeLink) {
+					return
+				}
+
+				links.forEach(link => link.classList.remove('is-active-link'))
+				window.document.querySelectorAll('.js-toc .toc-list-item').forEach(item => item.classList.remove('is-active-li'))
+				window.document.querySelectorAll('.js-toc .toc-list.is-collapsible').forEach(list => list.classList.add('is-collapsed'))
+
+				activeLink.classList.add('is-active-link')
+				const activeItem = activeLink.closest('.toc-list-item')
+				if (activeItem) {
+					activeItem.classList.add('is-active-li')
+					let parent = activeItem.parentElement
+					while (parent && parent.closest('.js-toc')) {
+						if (parent.classList.contains('toc-list')) {
+							parent.classList.remove('is-collapsed')
+						}
+						parent = parent.parentElement
+					}
+				}
+
 			}
 		}
 	}
