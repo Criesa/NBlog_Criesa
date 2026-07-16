@@ -86,6 +86,11 @@
 					return
 				}
 				this.pendingActiveHref = link.getAttribute('href') || ''
+				if (this.$route.name === 'markdown' && this.pendingActiveHref) {
+					// Markdown 阅读页只更新地址栏锚点，不把目录点击交给 Vue Router，避免重新加载文档。
+					event.preventDefault()
+					window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}${this.pendingActiveHref}`)
+				}
 				this.applyClickedActive()
 			},
 			handleTocScrollEnd() {

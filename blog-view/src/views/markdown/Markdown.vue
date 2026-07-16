@@ -98,8 +98,9 @@
 			next()
 		},
 		beforeRouteUpdate(to, from, next) {
-			// 点击目录只会改变 hash，同一文档内不应重新请求和渲染 Markdown
-			if (to.path === from.path) {
+			// 点击目录只会改变 hash。使用实际文件参数判断，避免编码差异被误判为切换文档。
+			const sameDocument = to.name === 'markdown' && from.name === 'markdown' && to.params.pathMatch === from.params.pathMatch
+			if (sameDocument) {
 				next()
 				return
 			}
