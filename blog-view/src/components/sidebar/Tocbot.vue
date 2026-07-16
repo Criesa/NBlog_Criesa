@@ -111,6 +111,12 @@
 				const activeItem = activeLink.closest('.toc-list-item')
 				if (activeItem) {
 					activeItem.classList.add('is-active-li')
+					// 与博客目录保持一致：选中一级标题时展开它自己的二级目录。
+					const childList = Array.from(activeItem.children).find(child => child.classList.contains('toc-list'))
+					if (childList) {
+						childList.classList.remove('is-collapsed')
+					}
+					// 选中二级及更深标题时，展开它所在的所有上级目录。
 					let parent = activeItem.parentElement
 					while (parent && parent.closest('.js-toc')) {
 						if (parent.classList.contains('toc-list')) {
