@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build && node scripts/generate-seo.js",
+    "generate:seo": "node scripts/generate-seo.js"
   },
   "dependencies": {
     "axios": "0.24.0",

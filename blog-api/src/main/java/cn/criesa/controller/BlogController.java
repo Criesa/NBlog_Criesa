@@ -95,6 +95,21 @@ public class BlogController {
 	}
 
 	/**
+	 * 获取用于静态预渲染的公开文章详情，不记录浏览量
+	 *
+	 * @param id 文章 ID
+	 * @return 无密码保护的公开文章详情
+	 */
+	@GetMapping("/seo/blog")
+	public Result getBlogForSeo(@RequestParam Long id) {
+		BlogDetail blog = blogService.getBlogByIdAndIsPublished(id);
+		if (!"".equals(blog.getPassword())) {
+			return Result.create(403, "受密码保护的文章不参与搜索引擎预渲染");
+		}
+		return Result.ok("获取成功", blog);
+	}
+
+	/**
 	 * 校验受保护文章密码是否正确，正确则返回jwt
 	 *
 	 * @param blogPassword 博客id、密码
